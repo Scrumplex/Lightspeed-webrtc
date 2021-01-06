@@ -9,8 +9,11 @@ RUN go build -o lightspeed-webrtc .
 
 FROM debian:buster-slim
 COPY --from=builder /go/src/app/lightspeed-webrtc /usr/local/bin/
+COPY docker/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 EXPOSE 8080
+EXPOSE 20000-20500/udp
+EXPOSE 65535/udp
 
-#CMD ["lightspeed-webrtc --addr=XXX.XXX.XXX.XXX", "run"]
-# defaults to localhost:8080, then up to docker compose to bind ports
-CMD ["lightspeed-webrtc", "--addr=localhost"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["lightspeed-webrtc"]
